@@ -124,36 +124,119 @@ export const SignupByOtp = (body) => {
     }
 }
 
+// export const LoginByGoogle = (body) => {
+//     console.log('fareeed',body)
+//     // console.log("google api called to save data")
+//     let apiUrl = `${Base_URL}google-login`
+//     return (dispatch) => {
+//         return axios({
+//             url: apiUrl,
+//             method: 'POST',
+//             data: body,
+//             headers: {
+//                 "Accept": "application/json",
+//                 "x-api-key":"3fd7977b-90b3-435f-b78a-eb53452a9e1d",
+//                 // "Content-Type":"application/x-www-form-urlencoded",
+//                 "Content-Type":'multipart/form-data',
+                
+//             }
+//         }).then(res => {
+//             console.log('Google login res-->>>==============', res);
+//             dispatch({
+//                 type: type.FETCH_LOGIN_BY_GOOGLE_FULFILLED,
+//                 payload: res
+//             })
+//             return res
+//         })
+//             .catch((err) => {
+//                 dispatch({
+//                     type: type.FETCH_LOGIN_BY_GOOGLE_REJECTED,
+//                     payload: err,
+//                 })
+//                 return err
+//             })
+//     }
+// }
+
+// export const LoginByGoogle = (body) => {
+//     console.log('fareeed',body)
+//     // console.log("google api called to save data")
+//     let apiUrl = `${Base_URL}google-login`
+//     return (dispatch) => {
+//         return fetch(apiUrl,{
+//             method: 'POST',
+//             headers: {
+//                 "Accept": "application/json",
+//                 "x-api-key":"3fd7977b-90b3-435f-b78a-eb53452a9e1d",
+//                 // "Content-Type":"application/x-www-form-urlencoded",
+//                 "Content-Type":'multipart/form-data',
+                
+//             },
+//             data: body,
+
+//         }).then((res)=>{
+//             return res.json()
+//         }).
+//         then(res => {
+//             console.log('Google login res-->>>==============', res);
+//             dispatch({
+//                 type: type.FETCH_LOGIN_BY_GOOGLE_FULFILLED,
+//                 payload: res
+//             })
+//             return res
+//         })
+//             .catch((err) => {
+//                 dispatch({
+//                     type: type.FETCH_LOGIN_BY_GOOGLE_REJECTED,
+//                     payload: err,
+//                 })
+//                 return err
+//             })
+//     }
+// }
+
+
 export const LoginByGoogle = (body) => {
-    // console.log("google api called to save data")
-    let apiUrl = `${Base_URL}google-login`
+    console.log('fareeed', body);
+    let apiUrl = `${Base_URL}google-login`;
+
     return (dispatch) => {
-        return axios({
-            url: apiUrl,
+        return fetch(apiUrl, {
             method: 'POST',
-            data: body,
             headers: {
-                "Accept": "appilication/json",
-                "x-api-key":"3fd7977b-90b3-435f-b78a-eb53452a9e1d",
-                "Content-Type":"application/x-www-form-urlencoded",
+                "Accept": "application/json",
+                "x-api-key": "3fd7977b-90b3-435f-b78a-eb53452a9e1d",
+                // No need to set Content-Type here as FormData takes care of it
+            },
+            body: body,
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw Error(res.statusText);
             }
-        }).then(res => {
-            // console.log('Google login res', res);
+            return res.json(); // Extract JSON from the response
+        })
+        .then(data => {
+            console.log('Google login data:', data);
             dispatch({
                 type: type.FETCH_LOGIN_BY_GOOGLE_FULFILLED,
-                payload: res
-            })
-            return res
+                payload: data // Use the extracted data
+            });
+            return data;
         })
-            .catch((err) => {
-                dispatch({
-                    type: type.FETCH_LOGIN_BY_GOOGLE_REJECTED,
-                    payload: err,
-                })
-                return err
-            })
-    }
-}
+        .catch((err) => {
+            console.error('Google login error:', err);
+            dispatch({
+                type: type.FETCH_LOGIN_BY_GOOGLE_REJECTED,
+                payload: err,
+            });
+            return err;
+        });
+    };
+};
+
+
+
 
 export const LoginByFacebook = (body) => {
     // console.log("facebook api called to save data")

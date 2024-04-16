@@ -64,7 +64,7 @@ const mapStateToProps = (state) => {
 
 const Signup = ({ navigation, countryList, authActions, route }) => {
 
-  const [byPhone, setByPhone] = useState(true);
+  const [byPhone, setByPhone] = useState('phone');
   const [byEmail, setByEmail] = useState(false);
   const [loading, setLoading] = useState(false);
   const [code, setCode] = useState('')
@@ -727,6 +727,9 @@ const Signup = ({ navigation, countryList, authActions, route }) => {
     )
   }
 
+
+  console.log('-->>',byPhone)
+
   return (
     <View style={styles.mainBody}>
       <AlertNotificationRoot>
@@ -828,7 +831,7 @@ const Signup = ({ navigation, countryList, authActions, route }) => {
                 </View>
               }
 
-              {byPhone ?
+              {byPhone  == 'phone'?
                 <TouchableOpacity onPress={() => loginWithOtp()} style={[styles.sendButton, { marginTop: 20 }]}>
                   <Text style={[styles.couponButtonText, { fontSize: RFValue(18) }]}>GET OTP</Text>
                 </TouchableOpacity> :

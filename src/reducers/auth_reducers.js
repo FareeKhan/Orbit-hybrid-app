@@ -49,9 +49,17 @@ const auth_Reducer = (state = initialState, action) => {
           }
 
           case "FETCH_LOGIN_BY_GOOGLE_FULFILLED": {
-            return { ...state, is_authed: true, loginByGoogle: action.payload, authToken: action.payload.data.access_token}
+
+            console.log('dddd000000000 =====',action.payload.access_token)
+            return { ...state, is_authed: true, loginByGoogle: action.payload, authToken: action.payload.access_token}
             break;
           }
+
+          // case "FETCH_LOGIN_BY_GOOGLE_FULFILLED": {
+          //   console.log('fareedhhhhhhhhhh======\\\\\\\\---',action.payload.access_token)
+          //   return { ...state, is_authed: true, loginByGoogle: action.payload, authToken: action.payload.access_token}
+          //   break;
+          // }
           
           case "FETCH_LOGIN_BY_GOOGLE_REJECTED": {
             return { ...state, is_authed: false, error: action.payload }

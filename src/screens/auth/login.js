@@ -324,32 +324,40 @@ const Login = ({ navigation, countryList, authActions, route }) => {
   }
 
   const onGoogleAuth = () => {
+   try {
     GoogleSignin.configure({
       androidClientId: '922141319415-vtkqh7s562ej238prctkk2d8upjcmngp.apps.googleusercontent.com',
       iosClientId: '922141319415-feq2k8hs399ro7mjc4l687lobfsg1stb.apps.googleusercontent.com',
     });
 
     GoogleSignin.hasPlayServices().then((hasPlayService) => {
+      
       if (hasPlayService) {
         GoogleSignin.signOut();
 
         GoogleSignin.signIn().then((userInfo) => {
-          // console.log(JSON.stringify(userInfo))
+          console.log('--->>>',JSON.stringify(userInfo))
           handleLoginByGoogle(userInfo.user)
 
         })
       }
     }).catch((e) => {
+      console.log('sssssss',e)
       // console.log("ERROR IS: " + JSON.stringify(e));
       // console.log('something went wrong')
     })
+   } catch (error) {
+    console.log('-->>>>',error)
+   }
 
   }
 
   const handleLoginByGoogle = (user) => {
     //navigation.navigate('BottomTabRoutes')
     // console.log(user.email, user.id, user.name)
-    let formData = new FormData();
+
+    try {
+      let formData = new FormData();
     formData.append('email', user.email)
     formData.append('name', user.name)
     formData.append('google_id', user.id)
@@ -358,12 +366,13 @@ const Login = ({ navigation, countryList, authActions, route }) => {
 
     setLoading(true)
     authActions.LoginByGoogle(formData).then(res => {
+      console.log('--dasdasdassdasdasdasdasdasdasdasdasdasda',res)
       setLoading(false)
       // console.log('Api response data', res);
-      if (res.status == '200') {
-        AsyncStorage.setItem("user_token", res.data.access_token);
+      if (res?.access_token) {
+        AsyncStorage.setItem("user_token", res.access_token);
         AsyncStorage.setItem("facebook_uuid", '0');
-        setNotificationToken(res.data.access_token)
+        setNotificationToken(res.access_token)
         //alert("Login Successful")
         // Dialog.show({
         //   type: ALERT_TYPE.SUCCESS,
@@ -372,51 +381,82 @@ const Login = ({ navigation, countryList, authActions, route }) => {
         //   button: 'Done',
         // })
         navigation.navigate(nav == "topup" ? "Step3" : 'BottomTabRoutes', { screen: 'Topup' })
-      }
-      else if (res.response.status == "400") {
-        if (res.response.data && res.response.data.errors) {
-          if (res.response.data.errors.email) {
-            Platform.OS === "ios" ?
-              alert(res.response.data.errors.email) :
-              showMessage({
-                message: "Alert !!!",
-                description: res.response.data.errors.email,
-                titleStyle: { fontSize: 20, color: 'red', fontWeight: '500', marginTop: 10, fontFamily: 'RobotoCondensed-Regular', textAlign: 'left' },
-                textStyle: { fontSize: 18, color: '#FFF', fontWeight: '500', marginTop: 5, fontFamily: 'RobotoCondensed-Regular', textAlign: 'left' },
-                type: "default",
-                backgroundColor: "#39475D", // background color
-                color: "#fff", // text color
-                style: { maxHeight: 150, width: "92%", borderRadius: 12, borderWidth: 3, borderColor: '#f2f2f2', },
-              });
-          }
-          if (res.response.data.errors.phone) {
-            Platform.OS === "ios" ?
-              alert(res.response.data.errors.phone) :
-              showMessage({
-                message: "Alert !!!",
-                description: res.response.data.errors.phone,
-                titleStyle: { fontSize: 20, color: 'red', fontWeight: '500', marginTop: 10, fontFamily: 'RobotoCondensed-Regular', textAlign: 'left' },
-                textStyle: { fontSize: 18, color: '#FFF', fontWeight: '500', marginTop: 5, fontFamily: 'RobotoCondensed-Regular', textAlign: 'left' },
-                type: "default",
-                backgroundColor: "#39475D", // background color
-                color: "#fff", // text color
-                style: { maxHeight: 150, width: "92%", borderRadius: 12, borderWidth: 3, borderColor: '#f2f2f2', },
-              });
-          }
-        }
-      }
-      else if (res.response.status == '422') {
-        //setLoading(false);
-        alert("Invalid Email")
-      }
+    }})
+    } catch (error) {
+      console.log(error)
+    }
+    
+    // let formData = new FormData();
+    // formData.append('email', user.email)
+    // formData.append('name', user.name)
+    // formData.append('google_id', user.id)
+    // formData.append('phone', user.phone ? user.phone : '')
+    // // console.log(formData);
 
-      else {
-        //setLoading(false);
-        alert("Something went wrong")
-      }
-    }).then(error => {
-      // console.log(error)
-    })
+    // setLoading(true)
+    // authActions.LoginByGoogle(formData).then(res => {
+    //   console.log('--dasdasdassdasdasdasdasdasdasdasdasdasda',res)
+    //   setLoading(false)
+    //   // console.log('Api response data', res);
+    //   if (res.status == '200') {
+    //     AsyncStorage.setItem("user_token", res.access_token);
+    //     AsyncStorage.setItem("facebook_uuid", '0');
+    //     setNotificationToken(res.access_token)
+    //     //alert("Login Successful")
+    //     // Dialog.show({
+    //     //   type: ALERT_TYPE.SUCCESS,
+    //     //   title: 'Success',
+    //     //   textBody: "Login Successful",
+    //     //   button: 'Done',
+    //     // })
+    //     navigation.navigate(nav == "topup" ? "Step3" : 'BottomTabRoutes', { screen: 'Topup' })
+    //   }
+    //   else if (res.response.status == "400") {
+    //     if (res.response.data && res.response.data.errors) {
+    //       if (res.response.data.errors.email) {
+    //         Platform.OS === "ios" ?
+    //           alert(res.response.data.errors.email) :
+    //           showMessage({
+    //             message: "Alert !!!",
+    //             description: res.response.data.errors.email,
+    //             titleStyle: { fontSize: 20, color: 'red', fontWeight: '500', marginTop: 10, fontFamily: 'RobotoCondensed-Regular', textAlign: 'left' },
+    //             textStyle: { fontSize: 18, color: '#FFF', fontWeight: '500', marginTop: 5, fontFamily: 'RobotoCondensed-Regular', textAlign: 'left' },
+    //             type: "default",
+    //             backgroundColor: "#39475D", // background color
+    //             color: "#fff", // text color
+    //             style: { maxHeight: 150, width: "92%", borderRadius: 12, borderWidth: 3, borderColor: '#f2f2f2', },
+    //           });
+    //       }
+    //       if (res.response.data.errors.phone) {
+    //         Platform.OS === "ios" ?
+    //           alert(res.response.data.errors.phone) :
+    //           showMessage({
+    //             message: "Alert !!!",
+    //             description: res.response.data.errors.phone,
+    //             titleStyle: { fontSize: 20, color: 'red', fontWeight: '500', marginTop: 10, fontFamily: 'RobotoCondensed-Regular', textAlign: 'left' },
+    //             textStyle: { fontSize: 18, color: '#FFF', fontWeight: '500', marginTop: 5, fontFamily: 'RobotoCondensed-Regular', textAlign: 'left' },
+    //             type: "default",
+    //             backgroundColor: "#39475D", // background color
+    //             color: "#fff", // text color
+    //             style: { maxHeight: 150, width: "92%", borderRadius: 12, borderWidth: 3, borderColor: '#f2f2f2', },
+    //           });
+    //       }
+    //     }
+    //   }
+    //   else if (res.response.status == '422') {
+    //     //setLoading(false);
+    //     alert("Invalid Email")
+    //   }
+
+    //   else {
+    //     //setLoading(false);
+    //     alert("Something went wrong")
+    //   }
+    // }).then(error => {
+
+
+    //   console.log('GoogleLoginm000',error)
+    // })
   }
 
   const getInfoFromToken = (token) => {
